@@ -40,7 +40,7 @@ public class SquareCollider : MonoBehaviour, ICustomCollider
             return IsOverlapping(squarePosition, size, otherSquarePosition, square.size);
         }
 
-        // If the other collider is a CircleCollider, use the circle's collision detection logic
+        // If the other collider is a CircleCollider, uses the circle's collision detection logic
         if (other is CircleCollider circle)
         {
             return circle.IsColliding(this);

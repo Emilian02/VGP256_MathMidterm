@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -93,6 +95,7 @@ public class PlayerMovement : MonoBehaviour
                     collider.GetGameObject().SetActive(false);
                 }
 
+                // Checks for the require keys to open the door
                 if (collider.GetGameObject().CompareTag("Door"))
                 {
                     if((KeyManager.collectedKeys & KeyManager.key1) == KeyManager.key1 && (KeyManager.collectedKeys & KeyManager.key2) == KeyManager.key2)
@@ -101,6 +104,7 @@ public class PlayerMovement : MonoBehaviour
                     }
                 }
 
+                // Checks to see if you have all keys
                 if (collider.GetGameObject().CompareTag("Exit"))
                 {
                     if(keysCollected.HasAllKeys())

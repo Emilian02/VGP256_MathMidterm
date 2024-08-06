@@ -14,6 +14,9 @@ public class DisplayKeys : MonoBehaviour
     void Start()
     {
         keyManager = FindObjectOfType<KeyManager>();
+        key1Icon.SetActive(false);
+        key2Icon.SetActive(false);
+        key3Icon.SetActive(false);
     }
 
     void Update()

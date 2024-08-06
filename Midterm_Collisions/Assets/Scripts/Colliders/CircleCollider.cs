@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CircleCollider : MonoBehaviour, ICustomCollider
 {
-    public float radius = 0.5f;
+    public float radius;
     public Vector2 offset; 
 
     void Start()

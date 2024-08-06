@@ -9,7 +9,7 @@ public class KeyManager : MonoBehaviour
     static public int key3 = 1 << 2; // 100
 
     static public int collectedKeys = 0; // 000
-
+    
     // Adding keys
     public void AddKey(int key)
     {
@@ -24,6 +24,14 @@ public class KeyManager : MonoBehaviour
 
     public bool HasKey(int key)
     {
-        return (collectedKeys & key) == key;
+        if((collectedKeys & key) == key)
+        {
+            collectedKeys &= ~key;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
