@@ -79,12 +79,13 @@ public class CircleCollider : MonoBehaviour, ICustomCollider
         return (cornerDistance_sq <= Mathf.Pow(radius, 2));
     }
 
-    // Return the type of this collider for debugging purposes
+    // Return the type of collider as a string
     public string GetColliderType()
     {
         return "CircleCollider";
     }
 
+    // Return the GameObject this collider is attached to
     public GameObject GetGameObject()
     {
         return gameObject;

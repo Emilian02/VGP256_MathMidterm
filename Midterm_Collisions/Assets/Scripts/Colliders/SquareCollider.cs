@@ -85,7 +85,7 @@ public class SquareCollider : MonoBehaviour, ICustomCollider
     // Draws the outline of the collider
     void OnDrawGizmos()
     {
-        Gizmos.color = Color.green;
+        Gizmos.color = Color.red;
         Gizmos.DrawWireCube((Vector2)transform.position + offset, size);
     }
 }

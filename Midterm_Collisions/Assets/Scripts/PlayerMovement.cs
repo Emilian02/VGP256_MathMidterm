@@ -16,6 +16,14 @@ public class PlayerMovement : MonoBehaviour
     CircleCollider circleCollider;
     [SerializeField]
     float collisionPushFactor = 0.1f;
+    [SerializeField]
+    KeyManager keysCollected;
+    [SerializeField]
+    SceneLoader sceneLoader;
+    [SerializeField]
+    AudioSource src;
+    [SerializeField]
+    AudioClip sfx;
 
     Vector2 movementInput;
     Rigidbody2D rb;
@@ -25,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
+        src.clip = sfx;
     }
 
     void Update()
@@ -49,15 +58,55 @@ public class PlayerMovement : MonoBehaviour
             animator.SetBool("IsRunning", false);
         }
 
+        // Temporary list
+        List<ICustomCollider> collidersToCheck = new List<ICustomCollider>(ColliderManager.allColliders);
         // Check for collisions
-        foreach (var collider in ColliderManager.allColliders)
+        foreach (var collider in collidersToCheck)
         {
             if (circleCollider.IsColliding(collider))
             {
-                if (collider.GetGameObject().CompareTag("Wall"))
+                if (collider.GetGameObject().CompareTag("Wall") || collider.GetGameObject().CompareTag("Door"))
                 {
                     // Handle collision response
                     HandleCollisionResponse();
+                }
+
+                // Checks which key was grabbed
+                if (collider.GetGameObject().CompareTag("Key1"))
+                {
+                    keysCollected.AddKey(KeyManager.key1);
+                    src.Play();
+                    collider.GetGameObject().SetActive(false);
+                }
+
+                if (collider.GetGameObject().CompareTag("Key2"))
+                {
+                    keysCollected.AddKey(KeyManager.key2);
+                    src.Play();
+                    collider.GetGameObject().SetActive(false);
+                }
+
+                if (collider.GetGameObject().CompareTag("Key3"))
+                {
+                    keysCollected.AddKey(KeyManager.key3);
+                    src.Play();
+                    collider.GetGameObject().SetActive(false);
+                }
+
+                if (collider.GetGameObject().CompareTag("Door"))
+                {
+                    if((KeyManager.collectedKeys & KeyManager.key1) == KeyManager.key1 && (KeyManager.collectedKeys & KeyManager.key2) == KeyManager.key2)
+                    {
+                        collider.GetGameObject().SetActive(false);
+                    }
+                }
+
+                if (collider.GetGameObject().CompareTag("Exit"))
+                {
+                    if(keysCollected.HasAllKeys())
+                    {
+                        sceneLoader.EndScene();
+                    }
                 }
             }
         }
@@ -82,14 +131,21 @@ public class PlayerMovement : MonoBehaviour
                 Vector2 collisionPoint = GetCollisionPoint(collider);
                 Vector2 collisionNormal = (Vector2)transform.position - collisionPoint;
                 collisionNormal.Normalize();
-
                 // Calculate penetration depth
                 float penetrationDepth = CalculatePenetrationDepth(collider, collisionPoint);
 
                 // Apply collision pushback
                 Vector2 scale = transform.localScale;
                 Vector2 adjustedPushback = collisionNormal * (penetrationDepth / Mathf.Max(scale.x, scale.y)) * collisionPushFactor;
-                rb.position += adjustedPushback;
+
+                if(IsCollidingWithTop(collider, collisionPoint))
+                {
+                    rb.position -= adjustedPushback * 2;
+                }
+                else
+                {
+                    rb.position += adjustedPushback;
+                }
             }
         }
     }
@@ -132,5 +188,18 @@ public class PlayerMovement : MonoBehaviour
             return circleCollider.radius - Vector2.Distance(circleCenter, collisionPoint);
         }
         return 0f;
+    }
+
+    private bool IsCollidingWithTop(ICustomCollider other, Vector2 collisionPoint)
+    {
+        if (other is SquareCollider square)
+        {
+            Vector2 squareCenter = (Vector2)square.GetGameObject().transform.position;
+            Vector2 halfSize = square.GetSize() / 2;
+
+            // Check if the collision point is on the top side of the square
+            return collisionPoint.y >= (squareCenter.y + halfSize.y - Mathf.Epsilon);
+        }
+        return false;
     }
 }
