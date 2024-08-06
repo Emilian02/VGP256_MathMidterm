@@ -5,6 +5,7 @@ Instructions on how to play:
 - And win
 
   Report:
+  
   My approach was to only focus on circle and square collision. I tried at first
   to implement a modular approach to the collider as seen with my scripts
   (CollisionManager, SquareManager, CircleManager). But as I continue with
